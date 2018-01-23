@@ -10,6 +10,10 @@ objects:
 - kind: BuildConfig
   apiVersion: v1
   metadata:
+    labels:
+      app: selenium
+      service: selenium-node-firefox
+      build: selenium-node-firefox
     name: selenium-node-firefox
   spec:
     triggers:
@@ -19,26 +23,32 @@ objects:
       contextDir: selenium-node-firefox
       type: Git
       git:
-        uri: https://github.com/jr00n/selenium-os
+        uri: https://github.com/arnaud-deprez/selenium-openshift-templates.git
         ref: master
     strategy:
       type: Docker
-      DockerStrategy: {}
+      DockerStrategy:
+        from:
+          kind: "DockerImage"
+          name: "selenium/node-firefox:${VERSION}"
     output:
       to:
         kind: ImageStreamTag
-        name: selenium-node-firefox:latest
+        name: selenium-node-firefox-ocp:${VERSION}
 - kind: ImageStream
   apiVersion: v1
   metadata:
-    name: selenium-node-firefox
-  spec:
-    dockerImageRepository: ''
-    tags:
-    - name: latest
+    labels:
+      app: selenium
+      build: selenium-node-firefox
+    name: selenium-node-firefox-ocp
+  spec: {}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
+    labels:
+      app: selenium
+      service: selenium-node-firefox
     name: selenium-node-firefox
   spec:
     strategy:
@@ -51,15 +61,19 @@ objects:
         - master
         from:
           kind: ImageStreamTag
-          name: selenium-node-firefox:latest
+          name: selenium-node-firefox-ocp:${VERSION}
     - type: ConfigChange
     replicas: 1
     selector:
+      app: selenium
+      service: selenium-node-firefox
       browser: firefox
     template:
       metadata:
         name: selenium-node-firefox-master
         labels:
+          app: selenium
+          service: selenium-node-firefox
           browser: firefox
       spec:
         containers:
@@ -84,9 +98,14 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
+    labels:
+      app: selenium
+      service: selenium-node-firefox
     name: selenium-node-firefox
   spec:
     selector:
+      app: selenium
+      service: selenium-node-firefox
       browser: firefox
     type: ClusterIP
     ports:
@@ -118,3 +137,6 @@ parameters:
     description: Unique ID assigned to the node
     generate: expression
     from: '[a-z]{4}'
+  - name: VERSION
+    description: Grid Selenium version
+    value: "3.8.1"

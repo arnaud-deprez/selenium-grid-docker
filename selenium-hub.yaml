@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Template
 metadata:
   name: selenium-hub
+  labels:
+    app: selenium
+    selenium-hub: master
   annotations:
     description: "A Selenium Grid"
     iconClass: "icon-selenium"
@@ -10,10 +13,14 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
+    labels:
+      app: selenium
+      service: selenium-hub
     name: selenium-hub
   spec:
     selector:
-      type: selenium-hub
+      app: selenium
+      service: selenium-hub
     type: ClusterIP
     ports:
     - name: web
@@ -27,15 +34,22 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
+    labels:
+      app: selenium
+      service: selenium-hub
     name: selenium-hub
   spec:
     replicas: 1
     selector:
-      type: selenium-hub
+      app: selenium
+      service: selenium-hub
+      deploymentconfig: selenium-hub
     template:
       metadata:
         labels:
-          type: selenium-hub
+          app: selenium
+          service: selenium-hub
+          deploymentconfig: selenium-hub
         name: selenium-hub
       spec:
         containers:
@@ -60,7 +74,7 @@ objects:
             value: ${GRID_MAX_SESSION}
           - name: GRID_UNREGISTER_IF_STILL_DOWN_AFTER
             value: ${GRID_UNREGISTER_IF_STILL_DOWN_AFTER}
-          image: selenium/hub
+          image: selenium/hub:${VERSION}
           name: master
           ports:
           - containerPort: 4444
@@ -68,6 +82,9 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
+    labels:
+      app: selenium
+      service: selenium-hub
     name: selenium-hub
   spec:
     host: ${HUB_ROUTE}
@@ -109,5 +126,6 @@ parameters:
   - name: GRID_UNREGISTER_IF_STILL_DOWN_AFTER
     description: Time to wait before unregistering nodes
     value: "500"
-labels:
-  selenium-hub: master
+  - name: VERSION
+    description: Grid Selenium version
+    value: "3.8.1"

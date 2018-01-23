@@ -1,18 +1,16 @@
-Selenium OpenShift Templates
-===
+# Selenium OpenShift Templates
 
 > OpenShift Templates used for a Scalable Selenium infrastructure
 
-Usage
-===
+## Usage
 
 ```bash
-$ oc create -f selenium-hub.yaml
-$ oc create -f selenium-node-chrome.yaml
+oc process -f selenium-hub.yaml -p VERSION=3.8.1 | oc apply -f -
+oc process -f selenium-node-chrome.yaml -p VERSION=3.8.1 | oc apply -f -
+oc process -f selenium-node-firefox.yaml -p VERSION=3.8.1 | oc apply -f -
 ```
 
-Example
-===
+## Example
 
 ![openshift 1 hub 1 node](http://i.imgur.com/Ux3VcE3.png)
 ![hub 1 node](http://i.imgur.com/FBIDvta.png)
