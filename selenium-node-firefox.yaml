@@ -23,8 +23,8 @@ objects:
       contextDir: selenium-node-firefox
       type: Git
       git:
-        uri: https://github.com/arnaud-deprez/selenium-openshift-templates.git
-        ref: master
+        uri: ${GIT_URI}
+        ref: ${GIT_REF}
     strategy:
       type: Docker
       DockerStrategy:
@@ -53,16 +53,6 @@ objects:
   spec:
     strategy:
       type: Recreate
-    triggers:
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames:
-        - master
-        from:
-          kind: ImageStreamTag
-          name: selenium-node-firefox-ocp:${VERSION}
-    - type: ConfigChange
     replicas: 1
     selector:
       app: selenium
@@ -88,13 +78,40 @@ objects:
             value: ${HUB_PORT_4444_TCP_PORT}
           - name: REMOTE_HOST
             value: ${REMOTE_HOST}
-          image: selenium-node-firefox
+          image: ""
           name: master
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 5555
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: ${RESOURCES_LIMIT_CPU}
+              memory: ${RESOURCES_LIMIT_MEMORY}
           ports:
           - containerPort: 4444
             protocol: TCP
           - containerPort: 5555
             protocol: TCP
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - master
+        from:
+          kind: ImageStreamTag
+          name: selenium-node-firefox-ocp:${VERSION}
+    - type: ConfigChange
 - apiVersion: v1
   kind: Service
   metadata:
@@ -118,25 +135,37 @@ objects:
       targetPort: 4444
       protocol: TCP
 parameters:
-  - name: JAVA_OPTS
-    description: Options for the Java command
-    value: "-Xmx512m -Dselenium.LOGGER.level=WARNING"
-  - name: SE_OPTS
-    description: Options for the Node
-    value: ""
-  - name: HUB_PORT_4444_TCP_ADDR
-    description: The Hub to connect to
-    value: "selenium-hub"
-  - name: HUB_PORT_4444_TCP_PORT
-    description: The Hub port to connect to
-    value: "4444"
-  - name: REMOTE_HOST
-    description: The remote host
-    value: ""
-  - name: NODE_ID
-    description: Unique ID assigned to the node
-    generate: expression
-    from: '[a-z]{4}'
-  - name: VERSION
-    description: Grid Selenium version
-    value: "3.8.1"
+- name: JAVA_OPTS
+  description: Options for the Java command
+  value: "-Xmx512m -Dselenium.LOGGER.level=WARNING"
+- name: SE_OPTS
+  description: Options for the Node
+  value: ""
+- name: HUB_PORT_4444_TCP_ADDR
+  description: The Hub to connect to
+  value: "selenium-hub"
+- name: HUB_PORT_4444_TCP_PORT
+  description: The Hub port to connect to
+  value: "4444"
+- name: REMOTE_HOST
+  description: The remote host
+  value: ""
+- name: NODE_ID
+  description: Unique ID assigned to the node
+  generate: expression
+  from: '[a-z]{4}'
+- name: RESOURCES_LIMIT_CPU
+  description: Resources limit CPU
+  value: "1000m"
+- name: RESOURCES_LIMIT_MEMORY
+  description: Resources limit memory
+  value: "512Mi"
+- name: VERSION
+  description: Grid Selenium version
+  value: "3.8.1"
+- name: GIT_URI
+  description: Git URI
+  value: https://github.com/arnaud-deprez/selenium-openshift-templates.git
+- name: GIT_REF
+  description: Git ref, branch or tag
+  value: master
