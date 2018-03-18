@@ -5,9 +5,9 @@
 ## Usage
 
 ```bash
-oc process -f selenium-hub.yaml -p VERSION=3.8.1 | oc apply -f -
-oc process -f selenium-node-chrome.yaml -p VERSION=3.8.1 | oc apply -f -
-oc process -f selenium-node-firefox.yaml -p VERSION=3.8.1 | oc apply -f -
+oc process -f selenium-hub.yaml -p VERSION=3.11 | oc apply -f -
+oc process -f selenium-node-chrome.yaml -p VERSION=3.11 | oc apply -f -
+oc process -f selenium-node-firefox.yaml -p VERSION=3.11 | oc apply -f -
 ```
 
 ## Example
