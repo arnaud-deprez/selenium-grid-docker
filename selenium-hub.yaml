@@ -151,4 +151,4 @@ parameters:
   value: "512Mi"
 - name: VERSION
   description: Grid Selenium version
-  value: "3.8.1"
+  value: "3"
