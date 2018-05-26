@@ -162,7 +162,7 @@ parameters:
   value: "512Mi"
 - name: VERSION
   description: Grid Selenium version
-  value: "3.8.1"
+  value: "3"
 - name: GIT_URI
   description: Git URI
   value: https://github.com/arnaud-deprez/selenium-openshift-templates.git
