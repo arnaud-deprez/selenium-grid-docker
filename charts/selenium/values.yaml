@@ -1,0 +1,55 @@
+deployment:
+  type: "openshift"
+
+selenium:
+  hub:
+    ## The repository and image
+    image: "selenium/hub"
+    ## The tag for the image
+    tag: "3.13.0"
+    serviceType: "ClusterIP"
+  chrome:
+    enabled: true
+    ## The repository and image
+    image: "172.30.1.1:5000/cicd/node-chrome-ocp"
+    ## The tag for the image
+    tag: "3.13.0"
+    build:
+      git: 
+        uri: "https://github.com/arnaud-deprez/selenium-openshift-templates.git"
+      contextDir: "selenium-node-chrome"
+  chromeDebug:
+    enabled: false
+    ## The repository and image
+    image: "selenium/node-chrome-debug"
+    ## The tag for the image
+    tag: "3.13.0"
+  firefox:
+    enabled: true
+    ## The repository and image
+    image: "172.30.1.1:5000/cicd/node-firefox-ocp"
+    ## The tag for the image
+    tag: "3.13.0"
+    build:
+      git: 
+        uri: "https://github.com/arnaud-deprez/selenium-openshift-templates.git"
+      contextDir: "selenium-node-firefox"
+  firefoxDebug:
+    enabled: false
+    ## The repository and image
+    image: "selenium/node-firefox-debug"
+    ## The tag for the image
+    tag: "3.13.0"
+
+ingress:
+  enabled: true
+  #hostname: 
+  path: "/"
+  annotations:
+  # # NOTE: Can't use 'false' due to https://github.com/jetstack/kube-lego/issues/173.
+  # kubernetes.io/ingress.allow-http: true
+  # kubernetes.io/ingress.class: gce
+  # kubernetes.io/ingress.global-static-ip-name: ""
+  # kubernetes.io/tls-acme: true
+  tls: {}
+  #   secretName: nexus-tls

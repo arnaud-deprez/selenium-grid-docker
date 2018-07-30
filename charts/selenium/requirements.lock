@@ -1,0 +1,6 @@
+dependencies:
+- name: selenium
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 0.8.0
+digest: sha256:6cc84d92049ed0816ad0740071523b26a87a45806271b86004315baead503a01
+generated: 2018-07-30T21:44:44.980327589+02:00

@@ -1,0 +1,43 @@
+{{- if and (eq "openshift" .Values.deployment.type) (.Values.selenium.chrome.enabled) -}}
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+{{ include "selenium.labels" . | indent 4 }}
+  name: {{ template "selenium.name" . }}-chrome-docker
+spec:
+  failedBuildsHistoryLimit: 1
+  successfulBuildsHistoryLimit: 1
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "{{ regexSplit "/" .Values.selenium.chrome.image -1 | last }}:{{ .Values.selenium.chrome.tag }}"
+  postCommit: {}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: {{ .Values.selenium.chrome.build.git.uri | quote }}
+      ref: {{ default "master" .Values.selenium.chrome.build.git.ref | quote }}
+    contextDir: {{ .Values.selenium.chrome.build.contextDir | quote }}
+  strategy:
+    dockerStrategy:
+{{- if .Values.selenium.chrome.build.env }}
+      env:
+{{- range $ekey, $eval := .Values.selenium.chrome.build.env }}
+      - name: {{ $ekey | quote }}
+        value: {{ $eval | quote }}
+{{- end }}
+{{- end }}
+      noCache: true
+      forcePull: true
+    type: Docker
+  triggers: []
+{{- end }}

@@ -1,26 +1,26 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: selenium-node-firefox
+  name: selenium-node-chrome
   annotations:
-    description: "Selenium Node with Google firefox browser"
+    description: "Selenium Node with Google Chrome browser"
     iconClass: "icon-selenium"
-    tags: "selenium,node,firefox"
+    tags: "selenium,node,chrome"
 objects:
 - kind: BuildConfig
-  apiVersion: v1
+  apiVersion: build.openshift.io/v1
   metadata:
     labels:
       app: selenium
-      service: selenium-node-firefox
-      build: selenium-node-firefox
-    name: selenium-node-firefox
+      service: selenium-node-chrome
+      build: selenium-node-chrome
+    name: selenium-node-chrome
   spec:
     triggers:
     - type: ConfigChange
       configChange: {}
     source:
-      contextDir: selenium-node-firefox
+      contextDir: selenium-node-chrome
       type: Git
       git:
         uri: ${GIT_URI}
@@ -30,41 +30,41 @@ objects:
       DockerStrategy:
         from:
           kind: "DockerImage"
-          name: "selenium/node-firefox:${VERSION}"
+          name: "selenium/node-chrome:${VERSION}"
     output:
       to:
         kind: ImageStreamTag
-        name: selenium-node-firefox-ocp:${VERSION}
+        name: selenium-node-chrome-ocp:${VERSION}
 - kind: ImageStream
-  apiVersion: v1
+  apiVersion: image.openshift.io/v1
   metadata:
     labels:
       app: selenium
-      build: selenium-node-firefox
-    name: selenium-node-firefox-ocp
+      build: selenium-node-chrome
+    name: selenium-node-chrome-ocp
   spec: {}
-- apiVersion: v1
+- apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
     labels:
       app: selenium
-      service: selenium-node-firefox
-    name: selenium-node-firefox
+      service: selenium-node-chrome
+    name: selenium-node-chrome
   spec:
     strategy:
       type: Recreate
     replicas: 1
     selector:
       app: selenium
-      service: selenium-node-firefox
-      browser: firefox
+      service: selenium-node-chrome
+      browser: chrome
     template:
       metadata:
-        name: selenium-node-firefox-master
+        name: selenium-node-chrome-master
         labels:
           app: selenium
-          service: selenium-node-firefox
-          browser: firefox
+          service: selenium-node-chrome
+          browser: chrome
       spec:
         containers:
         - env:
@@ -110,20 +110,20 @@ objects:
         - master
         from:
           kind: ImageStreamTag
-          name: selenium-node-firefox-ocp:${VERSION}
+          name: selenium-node-chrome-ocp:${VERSION}
     - type: ConfigChange
 - apiVersion: v1
   kind: Service
   metadata:
     labels:
       app: selenium
-      service: selenium-node-firefox
-    name: selenium-node-firefox
+      service: selenium-node-chrome
+    name: selenium-node-chrome
   spec:
     selector:
       app: selenium
-      service: selenium-node-firefox
-      browser: firefox
+      service: selenium-node-chrome
+      browser: chrome
     type: ClusterIP
     ports:
     - name: node-port

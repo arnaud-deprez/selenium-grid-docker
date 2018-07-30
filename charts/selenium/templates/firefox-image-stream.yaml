@@ -1,0 +1,10 @@
+{{- if and (eq "openshift" .Values.deployment.type) (.Values.selenium.firefox.enabled) -}}
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+{{ include "selenium.labels" . | indent 4 }}
+    build: selenium
+  name: {{ regexSplit "/" .Values.selenium.firefox.image -1 | last | quote }}
+spec: {}
+{{- end }}
