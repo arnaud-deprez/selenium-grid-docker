@@ -1,6 +1,6 @@
 # Selenium OpenShift Templates
 
-> OpenShift Templates used for a Scalable Selenium infrastructure
+This is based on the [official selenium grid images](https://github.com/SeleniumHQ/docker-selenium) but it's compatible with Openshift permission policy.
 
 ## Setup With Helm (recommended)
 
