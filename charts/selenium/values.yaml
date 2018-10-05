@@ -1,45 +1,34 @@
-deployment:
-  type: "openshift"
-
 selenium:
   hub:
     ## The repository and image
     image: "selenium/hub"
     ## The tag for the image
-    tag: "3.13.0"
+    tag: "3.14.0"
     serviceType: "ClusterIP"
   chrome:
     enabled: true
     ## The repository and image
-    image: "172.30.1.1:5000/cicd/node-chrome-ocp"
+    image: "arnaudeprez/selenium-node-chrome"
     ## The tag for the image
-    tag: "3.13.0"
-    build:
-      git: 
-        uri: "https://github.com/arnaud-deprez/selenium-openshift-templates.git"
-      contextDir: "selenium-node-chrome"
+    tag: "latest"
   chromeDebug:
     enabled: false
     ## The repository and image
     image: "selenium/node-chrome-debug"
     ## The tag for the image
-    tag: "3.13.0"
+    tag: "3.14.0"
   firefox:
     enabled: true
     ## The repository and image
-    image: "172.30.1.1:5000/cicd/node-firefox-ocp"
+    image: "arnaudeprez/selenium-node-firefox"
     ## The tag for the image
-    tag: "3.13.0"
-    build:
-      git: 
-        uri: "https://github.com/arnaud-deprez/selenium-openshift-templates.git"
-      contextDir: "selenium-node-firefox"
+    tag: "latest"
   firefoxDebug:
     enabled: false
     ## The repository and image
     image: "selenium/node-firefox-debug"
     ## The tag for the image
-    tag: "3.13.0"
+    tag: "3.14.0"
 
 ingress:
   enabled: true

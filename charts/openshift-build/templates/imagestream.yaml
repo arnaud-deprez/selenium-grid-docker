@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: List
+items:
+{{- $root := . -}}
+{{- range $skey, $sval := .Values.selenium -}}
+{{- if $sval.enabled }}
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+{{ include "selenium.labels" $root | indent 6 }}
+      build: selenium
+    name: {{ regexSplit "/" $sval.image -1 | last | quote }}
+  spec: {}
+{{- end }}
+{{- end }}

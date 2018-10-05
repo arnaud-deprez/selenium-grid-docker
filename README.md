@@ -1,4 +1,4 @@
-# Selenium OpenShift Templates
+# Selenium OpenShift Templates [![Build Status](https://travis-ci.com/arnaud-deprez/selenium-grid-docker.svg?branch=master)](https://travis-ci.com/arnaud-deprez/selenium-grid-docker)
 
 This is based on the [official selenium grid images](https://github.com/SeleniumHQ/docker-selenium) but it's compatible with Openshift permission policy.
 
@@ -12,22 +12,19 @@ Once it is done, you can run the following:
 ```sh
 namespace=cicd
 oc new-project $namespace
-# install objects
-helm upgrade -i --set ingress.enabled=true --set ingress.hostname="<ingress_hostname>" selenium charts/selenium
+# configure build
+helm template --name selenium --set nameOverride=selenium charts/openshift-build | oc apply -f -
 # trigger builds
 oc start-build selenium-chrome-docker
 oc start-build selenium-firefox-docker
+# deploy
+helm template --name selenium -f charts/openshift-build/values.yaml --set ingress.enabled=true --set ingress.hostname="<ingress_hostname>" charts/selenium | oc apply -f -
 ```
 
 For example, with `minishift` you can setup the hostname with:
 
 ```sh
-namespace=cicd
-oc new-project $namespace
-helm upgrade -i --set ingress.enabled=true --set ingress.hostname=hub-cicd.$(minishift ip).nip.io selenium charts/selenium
-# trigger builds
-oc start-build selenium-chrome-docker
-oc start-build selenium-firefox-docker
+helm template --name selenium -f charts/openshift-build/values.yaml --set ingress.enabled=true --set ingress.hostname="hub-cicd.$(minishift ip).nip.io" charts/selenium | oc apply -f -
 ```
 
 ## Setup with openshift templates

@@ -1,4 +1,4 @@
 dependencies:
 - name: selenium
-  version: "0.8.0"
+  version: "0.10.0"
   repository: "https://kubernetes-charts.storage.googleapis.com"

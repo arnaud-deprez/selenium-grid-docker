@@ -1,7 +1,14 @@
-build:
-	docker build -t "jr00n/node-firefox-os" -f Dockerfile .
+IMAGE_NAME = arnaudeprez/selenium-node-firefox:latest
 
-.PHONY:test
-test:
-	docker build -t "jr00n/node-firefox-os-candidate" -f Dockerfile .
-	sh test/run
+.PHONY: build
+build:
+	docker build -t $(IMAGE_NAME) .
+
+.PHONY: test
+test: build
+	#IMAGE_NAME=$(IMAGE_NAME) test/run
+
+.PHONY: publish
+publish: build test
+	echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+	docker push $(IMAGE_NAME)

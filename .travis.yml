@@ -1,0 +1,24 @@
+sudo: required
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: "build"
+      name: "selenium-node-chrome"
+      script: make -C selenium-node-chrome test
+      if: branch != master
+    - stage: "build"
+      name: "selenium-node-firefox"
+      script: make -C selenium-node-firefox test
+      if: branch != master
+
+    - stage: "build"
+      name: "selenium-node-chrome"
+      script: make -C selenium-node-chrome publish
+      if: branch = master
+    - stage: "build"
+      name: "selenium-node-firefox"
+      script: make -C selenium-node-firefox publish
+      if: branch = master

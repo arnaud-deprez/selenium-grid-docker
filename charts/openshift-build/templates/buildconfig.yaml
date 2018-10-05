@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: List
+items:
+{{- $root := . -}}
+{{- range $skey, $sval := .Values.selenium -}}
+{{- if $sval.enabled }}
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+{{ include "selenium.labels" $root | indent 6 }}
+    name: {{ template "selenium.name" $root }}-{{ $skey | lower }}-docker
+  spec:
+    failedBuildsHistoryLimit: 1
+    successfulBuildsHistoryLimit: 1
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "{{ regexSplit "/" $sval.image -1 | last }}:{{ $sval.tag }}"
+    postCommit: {}
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: {{ $sval.build.git.uri | quote }}
+        ref: {{ default "master" $sval.build.git.ref | quote }}
+      contextDir: {{ $sval.build.contextDir | quote }}
+    strategy:
+      dockerStrategy:
+  {{- if $sval.build.env }}
+        env:
+  {{- range $ekey, $eval := $sval.build.env }}
+        - name: {{ $ekey | quote }}
+          value: {{ $eval | quote }}
+  {{- end }}
+  {{- end }}
+        noCache: true
+        forcePull: true
+      type: Docker
+    triggers: []
+{{- end }}
+{{- end }}
